@@ -99,7 +99,7 @@ L<Term::ANSIColor> for more information about what kind of color you can use.
     my $cb = $log->format;
     $log   = $log->format( sub { ... } );
 
-A callback for formatting log messages. See L<Mojo::Log> for more information.
+A callback for formatting log messages. Cannot be passed to C<new> at construction! See L<Mojo::Log> for more information.
 
 =head1 METHODS
 
