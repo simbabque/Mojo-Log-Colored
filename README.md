@@ -59,7 +59,7 @@ Mojo::Log::Colored - Colored Mojo logging
         $log   = $log->format( sub { ... } );
 
 
-    A callback for formatting log messages. See L<Mojo::Log> for more information.
+    A callback for formatting log messages. Cannot be passed to C<new> at construction! See L<Mojo::Log> for more information.
 
     # METHODS
 
