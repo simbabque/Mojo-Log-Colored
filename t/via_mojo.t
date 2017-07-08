@@ -3,13 +3,13 @@ use warnings;
 use Test::More;
 use Test::Mojo;
 use Mojolicious::Lite;
+use Capture::Tiny 'capture_stderr';
 use Mojo::Log::Colored;
 
-my $log = q{};
-open my $fh, ">", \$log or die $!;
+$ENV{MOJO_LOG_LEVEL} = 'debug'; # so we can run in on-verbose prove
 
-my $logger = Mojo::Log::Colored->new( handle => $fh );
-$logger->format( sub { $_[1] } );
+my $logger = Mojo::Log::Colored->new;
+$logger->format( sub { "$_[1]\n" } );
 app->log($logger);
 
 get '/debug' => sub { app->log->debug('foo'); shift->render( template => 'foo' ); };
@@ -28,15 +28,16 @@ my %defaults = (
 
 my $t = Test::Mojo->new;
 for my $level ( sort keys %defaults ) {
-    $t->get_ok("/$level")->status_is(200)->content_is("ok\n");
+    my $stderr = capture_stderr {
+        $t->get_ok("/$level")->status_is(200)->content_is("ok\n");
+    };
 
-    like $log, qr{
+    like $stderr, qr{
         \Q$defaults{$level}\E   # color of this level, escaped
         $level
+        \n
         \e\[0m                  # end of coloring
     }x, "log contains colors for $level";
-
-    $log = q{};
 }
 done_testing;
 
