@@ -40,10 +40,12 @@ __END__
 Mojo::Log::Colored - Colored Mojo logging
 
 =begin html
+
 <p>
 <a href="https://travis-ci.org/simbabque/Mojo-Log-Colored"><img src="https://travis-ci.org/simbabque/Mojo-Log-Colored.svg?branch=master"></a>
 <a href='https://coveralls.io/github/simbabque/Mojo-Log-Colored?branch=master'><img src='https://coveralls.io/repos/github/simbabque/Mojo-Log-Colored/badge.svg?branch=master' alt='Coverage Status' /></a>
 </p>
+
 =end html
 
 =head1 SYNOPSIS
@@ -108,6 +110,11 @@ L<Mojo::Log::Colored> inherits all methods from L<Mojo::Log> and does not implem
 =head1 SEE ALSO
 
 L<Mojo::Log>, L<Term::ANSIColor>
+
+=head1 ACKNOWLEDGEMENTS
+
+This plugin was inspired by lanti asking about a way to easier find specific errors
+in the Mojo log during unit test runs on L<Stack Overflow|https://stackoverflow.com/q/44965998/1331451>.
 
 =head1 LICENSE
 
