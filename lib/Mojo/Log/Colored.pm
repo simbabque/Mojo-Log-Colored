@@ -23,7 +23,14 @@ sub format {
 
     my ( $self, $format ) = @_;
 
-    return $self->_format( sub { colored( $format->(@_), $self->colors->{ $_[1] } ) } )->_format;
+    return $self->_format(
+        sub {
+            # only add colors if we have a color for this level
+            exists $self->colors->{ $_[1] }
+                ? colored( $format->(@_), $self->colors->{ $_[1] } )
+                : $format->(@_);
+        }
+    )->_format;
 }
 
 sub _default_format {
@@ -95,6 +102,16 @@ L<Mojo::Log::Colored> implements the following attributes.
 
 Takes a hash reference with the five log levels as keys and strings of colors as values. Refer to
 L<Term::ANSIColor> for more information about what kind of color you can use.
+
+You can turn off coloring for specific levels by omitting them from the config hash.
+
+    $log->colors(
+        {
+            fatal => "bold green on_red",
+        }
+    );
+
+The above will only color fatal messages. All other levels will be in your default terminal color.
 
 =head2 format
 

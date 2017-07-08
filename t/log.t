@@ -45,7 +45,7 @@ for my $level ( sort keys %defaults ) {
     $log->format( sub {$level} );
     $log->colors( { $level => "magenta" } );
 
-    my $stderr = capture_stderr { $log->$level("$level") };    # this is the call to log
+    my $stderr = capture_stderr { $log->$level($level) };    # this is the call to log
 
     like $stderr, qr{
         ^
@@ -62,6 +62,32 @@ for my $level ( sort keys %defaults ) {
     chomp $plain;    # fatal has one more
 
     is $plain, $level, "... and the custom format is correct";
+}
+
+{
+    $log->colors(
+        {
+            debug => "bold bright_white",
+            warn  => "bold green",
+            fatal => "bold yellow on_red",
+        }
+    );
+    $log->format( sub { $_[1] } );
+    my $stderr = capture_stderr { $log->$_($_) for qw/debug info warn error fatal/ };
+
+    #<<< do not tidy
+    is(
+        $stderr,
+        (
+                  ( "\e[1;97m" . "debug" . "\e\[0m" )
+                . "info"
+                . ( "\e[1;32m" . "warn" . "\e\[0m" )
+                . "error"
+                . ( "\e[1;33;41m" . "fatal" . "\e\[0m" )
+        ),
+        "levels without color are not colored"
+    );
+    #>>>
 }
 
 done_testing;

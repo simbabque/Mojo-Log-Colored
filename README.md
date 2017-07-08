@@ -58,6 +58,16 @@ That does not make a lot of sense, so you don't want to do that. Use this for de
 Takes a hash reference with the five log levels as keys and strings of colors as values. Refer to
 [Term::ANSIColor](https://metacpan.org/pod/Term::ANSIColor) for more information about what kind of color you can use.
 
+You can turn off coloring for specific levels by omitting them from the config hash.
+
+    $log->colors(
+        {
+            fatal => "bold green on_red",
+        }
+    );
+
+The above will only color fatal messages. All other levels will be in your default terminal color.
+
 ## format
 
     my $cb = $log->format;
