@@ -1,5 +1,5 @@
 requires 'perl', '5.008001';
-requires 'Term::ANSIColor';
+requires 'Term::ANSIColor', '3.00';
 requires 'Mojolicious';
 
 on 'test' => sub {

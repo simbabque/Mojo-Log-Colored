@@ -43,7 +43,7 @@
       "runtime" : {
          "requires" : {
             "Mojolicious" : "0",
-            "Term::ANSIColor" : "0",
+            "Term::ANSIColor" : "3.00",
             "perl" : "5.008001"
          }
       },
