@@ -2,6 +2,8 @@ package Mojo::Log::Colored;
 use Mojo::Base 'Mojo::Log';
 use Term::ANSIColor 'colored';
 
+use if $^O eq "MSWin32", "Win32::Console::ANSI";
+
 our $VERSION = "0.01";
 
 has 'colors' => sub {
