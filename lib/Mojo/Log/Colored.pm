@@ -132,7 +132,7 @@ L<Mojo::Log>, L<Term::ANSIColor>
 
 =head1 ACKNOWLEDGEMENTS
 
-This plugin was inspired by lanti asking about a way to easier find specific errors
+This plugin was inspired by lanti asking about a way to find specific errors more easily
 in the Mojo log during unit test runs on L<Stack Overflow|https://stackoverflow.com/q/44965998/1331451>.
 
 =head1 LICENSE
