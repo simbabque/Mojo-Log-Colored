@@ -27,6 +27,8 @@ sub format {
 
     return $self->_format(
         sub {
+            # Prevent having the end escape sequence at the start of the line
+            local $Term::ANSIColor::EACHLINE = "\n";
             # only add colors if we have a color for this level
             exists $self->colors->{ $_[1] }
                 ? colored( $format->(@_), $self->colors->{ $_[1] } )
