@@ -4,7 +4,7 @@ use Term::ANSIColor 'colored';
 
 use if $^O eq "MSWin32", "Win32::Console::ANSI";
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 
 has 'colors' => sub {
     return {
