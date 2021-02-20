@@ -2,6 +2,8 @@ Revision history for Perl extension Mojo-Log-Colored
 
 {{$NEXT}}
 
+0.04 2021-02-20T21:04:20Z
+
     - Automatically honour Mojolicious 9 breaking change in default log format based on
       installed Mojo version
 
