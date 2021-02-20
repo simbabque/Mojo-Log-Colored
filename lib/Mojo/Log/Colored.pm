@@ -37,8 +37,16 @@ sub format {
     )->_format;
 }
 
-sub _default_format {
-    '[' . localtime(shift) . '] [' . shift() . '] ' . join "\n", @_, '';
+# use the default logger format based on the Mojo version we're running under
+sub _default_format;
+if ($Mojolicious::VERSION && $Mojolicious::VERSION >= 9) {
+    *_default_format = sub {
+        '[' . localtime(shift) . '] [' . shift() . '] ' . join(' ', @_, "\n");       
+    };
+} else {
+    *_default_format = sub {
+        '[' . localtime(shift) . '] [' . shift() . '] ' . join("\n", @_, '');
+    };
 }
 
 1;
@@ -127,6 +135,11 @@ A callback for formatting log messages. Cannot be passed to C<new> at constructi
 =head1 METHODS
 
 L<Mojo::Log::Colored> inherits all methods from L<Mojo::Log> and does not implement new ones.
+
+=head1 BREAKING CHANGES
+
+Mojolicious changed the way multi-line log messages are emitted L<in version 9|https://mojolicious.io/blog/2021/02/14/announcing-mojolicious-9-0/>.
+This logger honours this default format.
 
 =head1 SEE ALSO
 
