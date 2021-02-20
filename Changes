@@ -2,6 +2,9 @@ Revision history for Perl extension Mojo-Log-Colored
 
 {{$NEXT}}
 
+    - Automatically honour Mojolicious 9 breaking change in default log format based on
+      installed Mojo version
+
 0.03 2020-05-22T12:32:37Z
 
     - Do not color line endings (Tina Müller)
