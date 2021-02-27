@@ -1,0 +1,102 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  - push
+  - pull_request
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  dist:
+    name: Make distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Cache ~/perl5
+        uses: actions/cache@v2
+        with:
+          key: ${{ runner.os }}-dist-locallib
+          path: ~/perl5
+      - name: Perl version
+        run: |
+          perl -v
+      - name: Install cpanm
+        run: |
+          curl -L https://cpanmin.us | perl - --sudo App::cpanminus
+      - name: Install local::lib
+        run: |
+          cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+      - name: Install Minilla
+        shell: bash
+        run: |
+          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+          cpanm -n Minilla
+      - name: Make distribution
+        shell: bash
+        run: |
+          eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+          ~/perl5/bin/minil dist
+      - name: Unpack distribution
+        run: mkdir build && tar -xzf *.tar.gz -C build --strip-components=1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: ./
+  inspect:
+    name: Inspect distribution
+    needs: dist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get dist artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+      - name: Install dependencies
+        run: |
+          sudo apt install tree perl-doc findutils
+      - name: Tree
+        run: tree build
+      - name: License
+        run: cat build/LICENSE
+      - name: Readme
+        run: cat build/README.md
+      - name: Changes
+        run: cat build/Changes
+      - name: META.json
+        run: cat build/META.json
+      - name: META.yml
+        run: cat build/META.yml
+      - name: Perldoc
+        run: |
+          find build -type f \( -name "*.pm" -o -name "*.pod" \) -exec echo "{}" \; -exec perldoc -T "{}" \;
+  test:
+    name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
+    needs: dist
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
+        perl: [ '5.16', '5.18', '5.20', '5.22', '5.24',' 5.26',' 5.28', '5.30', '5.32', 'latest' ]
+        exclude:
+          - { os: 'windows-latest', perl: '5.8' }
+    steps:
+      - name: Get dist artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+      - name: Set up perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+      - name: Perl version
+        run: perl -V
+      - name: Install dependencies
+        run: cpanm -n --installdeps ./build
+      - name: Test suite
+        working-directory: ./build/
+        run: prove -lrv t
