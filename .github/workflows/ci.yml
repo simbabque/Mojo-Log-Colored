@@ -84,6 +84,8 @@ jobs:
         perl: [ '5.16', '5.18', '5.20', '5.22', '5.24',' 5.26',' 5.28', '5.30', '5.32', 'latest' ]
         exclude:
           - { os: 'windows-latest', perl: '5.8' }
+          # we will do this one separately with multiple mojos
+          - { os: 'ubuntu-latest', perl: 'latest '}
     steps:
       - name: Get dist artifact
         uses: actions/download-artifact@v2
@@ -96,6 +98,39 @@ jobs:
       - name: Perl version
         run: perl -V
       - name: Install dependencies
+        run: cpanm -n --installdeps ./build
+      - name: Test suite
+        working-directory: ./build/
+        run: prove -lrv t
+  test-mojos:
+    name: Perl latest on ubuntu-latest with Mojolicious ${{ matrix.min }}
+    needs: dist
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - min: 6
+            max: 7
+          - min: 7
+            max: 8
+          - min: 8
+            max: 9
+          - min: 9
+            max: 10
+    steps:
+      - name: Get dist artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+      - name: Set up perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: latest
+      - name: Perl version
+        run: perl -V
+      - name: Install specific Mojolicious ${{ matrix.min }}
+        run: cpanm -n Mojolicious~">=${{ matrix.min }}.0000,<${{ matrix.max }}.0000"
+      - name: Install remaining dependencies
         run: cpanm -n --installdeps ./build
       - name: Test suite
         working-directory: ./build/
